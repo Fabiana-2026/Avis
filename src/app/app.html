@@ -1,0 +1,90 @@
+
+
+<div class="page">
+
+  <header class="header">
+    <h1>💬 Donnez votre avis</h1>
+    <p class="subtitle">Votre retour nous aide à nous améliorer</p>
+  </header>
+
+  <main class="content">
+
+    <!-- Formulaire -->
+    <section class="card form-card">
+      <h2>{{ editingId !== null ? '✏️ Modifier l’avis' : 'Laisser un avis' }}</h2>
+
+      <form (ngSubmit)="submit()">
+
+        <div class="form-group">
+          <label for="nom">Nom</label>
+          <input id="nom" type="text"
+                 [(ngModel)]="form.nom" name="nom"
+                 placeholder="Votre nom" required maxlength="50" />
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message"
+                    [(ngModel)]="form.message" name="message"
+                    placeholder="Écrivez votre avis ici..."
+                    required maxlength="1000" rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="note">Note</label>
+          <select id="note" [(ngModel)]="form.note" name="note">
+            <option *ngFor="let n of [1,2,3,4,5]" [ngValue]="n">
+              {{ n }} / 5
+            </option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit"
+                [disabled]="loading || !form.nom.trim() || !form.message.trim()">
+          {{ loading
+              ? (editingId !== null ? 'Modification...' : 'Envoi en cours...')
+              : (editingId !== null ? 'Enregistrer les modifications' : 'Envoyer mon avis') }}
+        </button>
+
+        <button *ngIf="editingId !== null"
+                type="button"
+                class="btn-cancel"
+                (click)="annulerEdition()">
+          Annuler
+        </button>
+
+        <p *ngIf="error" class="error">{{ error }}</p>
+      </form>
+    </section>
+
+    <!-- Liste des avis -->
+    <section class="card list-card">
+      <h2>Avis récents ({{ avisList.length }})</h2>
+
+      <p *ngIf="avisList.length === 0" class="empty">
+        Aucun avis pour le moment. Soyez le premier !
+      </p>
+
+      <div *ngFor="let a of avisList" class="avis-item">
+        <div class="avis-header">
+          <div class="avis-author">
+            <span class="avatar">{{ a.nom.charAt(0).toUpperCase() }}</span>
+            <div>
+              <strong>{{ a.nom }}</strong>
+              <span class="date">{{ a.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+          <span class="note">{{ a.note }} / 5 ⭐</span>
+        </div>
+
+        <p class="avis-message">{{ a.message }}</p>
+
+        <div class="avis-actions">
+          <button class="btn-edit" (click)="editer(a)">✏️ Modifier</button>
+          <button class="btn-delete" (click)="supprimer(a)">🗑️ Supprimer</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
